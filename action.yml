@@ -7,7 +7,9 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - run: |
+    - name: Check date and change visibility
+      id: change-visibility    
+      - run: |
         TARGET_DATE=${{ inputs.target_date }}
         CURRENT_DATE=$(date +%s)
 
@@ -32,7 +34,7 @@ runs:
           else
             echo "Current date is not yet the target date. Skipping."
           fi
-    - name: Disable workflow
+      - name: Disable workflow
         if: env.VISIBILITY_CHANGED == 'true'
         run: |
           curl \
