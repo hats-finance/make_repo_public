@@ -1,5 +1,6 @@
 name: make_repo_public
 description: 'Changes the repository visibility to public at a specified date and time'
+author: Shay Zluf
 inputs:
   target_date:
     description: 'The date and time(unix time format) when the repository should be made public'
@@ -9,7 +10,7 @@ runs:
   steps:
     - name: Check date and change visibility
       id: change-visibility    
-      - run: |
+      run: |
         TARGET_DATE=${{ inputs.target_date }}
         CURRENT_DATE=$(date +%s)
 
@@ -34,7 +35,7 @@ runs:
           else
             echo "Current date is not yet the target date. Skipping."
           fi
-      - name: Disable workflow
+    - name: Disable workflow
         if: env.VISIBILITY_CHANGED == 'true'
         run: |
           curl \
