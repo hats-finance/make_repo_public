@@ -36,7 +36,7 @@ runs:
             echo "Current date is not yet the target date. Skipping."
           fi
     - name: Disable workflow
-        if: env.VISIBILITY_CHANGED == 'true'
+      if: env.VISIBILITY_CHANGED == 'true'
         run: |
           curl \
             -X PUT \
