@@ -1,45 +1,35 @@
-name: make_repo_public
+name: 'Make Repo Public'
 description: 'Changes the repository visibility to public at a specified date and time'
-author: Shay Zluf
 inputs:
   target_date:
-    description: 'The date and time(unix time format) when the repository should be made public'
+    description: 'The date and time when the repository should be made public'
     required: true
 runs:
   using: 'composite'
   steps:
-    - name: Check date and change visibility
-      id: change-visibility    
-      run: |
+    - run: |
         TARGET_DATE=${{ inputs.target_date }}
         CURRENT_DATE=$(date +%s)
 
-          if [ $CURRENT_DATE -ge $TARGET_DATE ]; then
-            RESPONSE=$(curl \
-              -s \
-              -o /dev/null \
-              -w "%{http_code}" \
-              -X PATCH \
-              -H "Authorization: token ${{ secrets.GH_PAT }}" \
-              -H "Accept: application/vnd.github.v3+json" \
-              https://api.github.com/repos/${{ github.repository }} \
-              -d '{"visibility":"public"}')
-
-            if [ $RESPONSE -eq 200 ]; then
-              echo "Repository visibility successfully changed to public."
-              echo 'VISIBILITY_CHANGED=true' >> $GITHUB_ENV
-            else
-              echo "Failed to change repository visibility. HTTP response code: $RESPONSE"
-              exit 1
-            fi
-          else
-            echo "Current date is not yet the target date. Skipping."
-          fi
-    - name: Disable workflow
-      if: env.VISIBILITY_CHANGED == 'true'
-        run: |
-          curl \
-            -X PUT \
+        if [ $CURRENT_DATE -ge $TARGET_DATE ]; then
+          RESPONSE=$(curl \
+            -s \
+            -o /dev/null \
+            -w "%{http_code}" \
+            -X PATCH \
             -H "Authorization: token ${{ secrets.GH_PAT }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/${{ github.repository }}/actions/workflows/${{ github.workflow }}.yml/disable
+            https://api.github.com/repos/${{ github.repository }} \
+            -d '{"visibility":"public"}')
+
+          if [ $RESPONSE -eq 200 ]; then
+            echo "Repository visibility successfully changed to public."
+            echo 'VISIBILITY_CHANGED=true' >> $GITHUB_ENV
+          else
+            echo "Failed to change repository visibility. HTTP response code: $RESPONSE"
+            exit 1
+          fi
+        else
+          echo "Current date is not yet the target date. Skipping."
+        fi
+      shell: bash
