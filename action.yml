@@ -1,4 +1,4 @@
-name: 'Make Repo Public'
+name: make_repo_public
 description: 'Changes the repository visibility to public at a specified date and time'
 inputs:
   target_date:
