@@ -1,4 +1,4 @@
-name: make_repo_public
+name: 'Make Repo Public'
 description: 'Changes the repository visibility to public at a specified date and time'
 author: Shay Zluf
 inputs:
