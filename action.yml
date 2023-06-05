@@ -4,20 +4,27 @@ inputs:
   target_date:
     description: 'The date and time when the repository should be made public'
     required: true
+  gh_pat:
+    description: 'The GitHub Personal Access Token'
+    required: true
+  webhook_url:
+    description: 'The URL of the webhook to call'
+    required: true
+  verification:
+    description: 'The verification token'
+    required: true
 runs:
   using: 'composite'
   steps:
     - run: |
-        TARGET_DATE=${{ inputs.target_date }}
         CURRENT_DATE=$(date +%s)
-
-        if [ $CURRENT_DATE -ge $TARGET_DATE ]; then
+        if [ $CURRENT_DATE -ge ${{ inputs.target_date }} ]; then
           RESPONSE=$(curl \
             -s \
             -o /dev/null \
             -w "%{http_code}" \
             -X PATCH \
-            -H "Authorization: token ${{ secrets.GH_PAT }}" \
+            -H "Authorization: token ${{ inputs.gh_pat }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/${{ github.repository }} \
             -d '{"visibility":"public"}')
@@ -33,13 +40,29 @@ runs:
           echo "Current date is not yet the target date. Skipping."
         fi
       shell: bash
-    - name: Disable workflow
-        if: env.VISIBILITY_CHANGED == 'true'
-        run: |
-          curl \
-            -X PUT \
-            -H "Authorization: token ${{ secrets.GH_PAT }}" \
+    - run: |
+        if [ $VISIBILITY_CHANGED == 'true' ]; then
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X PUT \
+            -H "Authorization: token ${{ inputs.gh_pat }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/${{ github.repository }}/actions/workflows/${{ github.workflow }}.yml/disable
-        shell: bash
-        
+            https://api.github.com/repos/${{ github.repository }}/actions/workflows/make_repo_public.yml/disable)
+          if [ $RESPONSE -ne 204 ]; then
+            echo "Failed to disable workflow. HTTP response code: $RESPONSE"
+            exit 1
+          fi
+        fi
+      shell: bash
+    - run: |
+        RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Content-Type: application/json" \
+          -d '{
+            "repository": "${{ github.repository }}",
+            "target_date": "${{ inputs.target_date }}",
+            "visibility_changed": "${{ env.VISIBILITY_CHANGED }}",
+            "verification": "${{ inputs.verification }}"
+          }' \
+          ${{ inputs.webhook_url }})
+        if [ $RESPONSE -ne 200 ]; then
+          echo "Failed to call webhook. HTTP response code: $RESPONSE"
+          exit 1
+        fi
+      shell: bash
