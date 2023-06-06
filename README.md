@@ -6,8 +6,7 @@ This action changes the visibility of a GitHub repository to public at a specifi
 
 - `target_date`: The date and time when the repository should be made public. This should be a Unix timestamp (the number of seconds since 1970-01-01 00:00:00 UTC). Required.
 - `gh_pat`: A GitHub Personal Access Token with the `repo` scope. This is used to change the repository visibility and disable the workflow. Required.
-- `webhook_url`: The URL of the webhook to call after the visibility change. Required.
-- `verification`: A verification token to include in the webhook call. Required.
+- `webhook_url`: The URL of the webhook to call after the visibility change, including the verification code as a query parameter. Optional.
 
 ## Usage
 
@@ -43,10 +42,10 @@ Now, you can use the action in your workflow:
   with:
     target_date: '[Unix time of when you want the repo to become public]'
     gh_pat: ${{ secrets.GH_PAT }}
-    webhook_url(optional): '[http://backend.hats.finance/test](https://###.###/verifyaction?verificationCode=[string])'
+    webhook_url: 'https://###.###/verifyaction?verificationCode=[string]'
 ```
 
-In this example, `your-username` should be replaced with your GitHub username, and `v1` should be replaced with the version of the action you want to use. The `target_date`, `gh_pat`, `webhook_url`, and `verification` inputs are set to example values and should be replaced with your own values.
+In this example, `your-username` should be replaced with your GitHub username, and `v3` should be replaced with the version of the action you want to use. The `target_date`, `gh_pat`, `webhook_url`, and `verification` inputs are set to example values and should be replaced with your own values.
 
 Please note that this action should be used in a workflow that runs on a schedule and has the `make_repo_public.yml` workflow file. If the visibility change is successful, the workflow will be disabled to prevent further runs.
 
