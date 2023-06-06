@@ -36,13 +36,23 @@ Then, you need to add this token as a secret in your repository:
 5. Click on "Add secret".
 
 Now, you can use the action in your workflow:
+```
+name: Make Repo Public
 
-```yaml
-- uses: your-username/make-repo-public@v3
-  with:
-    target_date: '[Unix time of when you want the repo to become public]'
-    gh_pat: ${{ secrets.GH_PAT }}
-    webhook_url: 'https://###.###/verifyaction?verificationCode=[string]'
+on:
+  schedule:
+    - cron: '0 * * * *' # This will run the action every hour
+
+jobs:
+  make-public:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Make repository public
+        uses: your-username/make-repo-public@v1
+        with:
+          target_date: '[UNIX FORMATTED repo visibility change time]'
+          gh_pat: ${{ secrets.GH_PAT }}
+          webhook_url: 'https://###.###/verification?verificationCode=[string]'
 ```
 
 In this example, `your-username` should be replaced with your GitHub username, and `v3` should be replaced with the version of the action you want to use. The `target_date`, `gh_pat`, `webhook_url`, and `verification` inputs are set to example values and should be replaced with your own values.
