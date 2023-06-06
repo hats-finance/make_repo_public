@@ -16,11 +16,17 @@ First, you need to generate a GitHub Personal Access Token:
 1. Go to your GitHub settings.
 2. Click on "Developer settings".
 3. Click on "Personal access tokens".
-4. Click on "Generate new token".
-5. Give your token a descriptive name.
-6. Select the `repo` scope.
-7. Click on "Generate token".
-8. Copy the generated token.
+4. Click "Fine-grained tokens"
+5. Click on "Generate new token".
+6. Give your token a descriptive name.
+7. Set the expiration date that further in the future then the date you want to make the repo public. This is the date when the token will no longer be valid.
+8. Select the `Only select repositories` option.
+9. Choose the relevant repo you would like to make public.
+10. Choose `Repository permissions`
+11. Allow `Actions` Read and write permissions.
+12. Allow `Administration` Read and write permissions.
+14. Click on "Generate token".
+15. Copy the generated token.
 
 Then, you need to add this token as a secret in your repository:
 
@@ -35,7 +41,7 @@ Now, you can use the action in your workflow:
 ```yaml
 - uses: your-username/make-repo-public@v1
   with:
-    target_date: '1685953800'
+    target_date: '[Unix time of when you want the repo to become public]'
     gh_pat: ${{ secrets.GH_PAT }}
     webhook_url: 'http://backend.hats.finance/test'
     verification: 'jggdfjg73r78gduigduy'
