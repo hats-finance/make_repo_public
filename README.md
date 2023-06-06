@@ -43,7 +43,7 @@ Now, you can use the action in your workflow:
   with:
     target_date: '[Unix time of when you want the repo to become public]'
     gh_pat: ${{ secrets.GH_PAT }}
-    webhook_url: '[http://backend.hats.finance/test](https://###.###/verifyaction?verificationCode=[string])'
+    webhook_url(optional): '[http://backend.hats.finance/test](https://###.###/verifyaction?verificationCode=[string])'
 ```
 
 In this example, `your-username` should be replaced with your GitHub username, and `v1` should be replaced with the version of the action you want to use. The `target_date`, `gh_pat`, `webhook_url`, and `verification` inputs are set to example values and should be replaced with your own values.
