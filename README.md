@@ -1,55 +1,50 @@
-# Make Repo Public Action
+# Make Repo Public GitHub Action
 
-This action changes the visibility of a GitHub repository to public at a specified date and time.
+This action changes the visibility of a GitHub repository to public at a specified date and time. It also calls a webhook with information about the repository, the target date, and whether the visibility change was successful.
 
 ## Inputs
 
-### `target_date`
+- `target_date`: The date and time when the repository should be made public. This should be a Unix timestamp (the number of seconds since 1970-01-01 00:00:00 UTC). Required.
+- `gh_pat`: A GitHub Personal Access Token with the `repo` scope. This is used to change the repository visibility and disable the workflow. Required.
+- `webhook_url`: The URL of the webhook to call after the visibility change. Required.
+- `verification`: A verification token to include in the webhook call. Required.
 
-**Required** The date and time when the repository should be made public. This should be a Unix timestamp.
+## Usage
 
-## Outputs
+First, you need to generate a GitHub Personal Access Token:
 
-None.
+1. Go to your GitHub settings.
+2. Click on "Developer settings".
+3. Click on "Personal access tokens".
+4. Click on "Generate new token".
+5. Give your token a descriptive name.
+6. Select the `repo` scope.
+7. Click on "Generate token".
+8. Copy the generated token.
 
-## Example usage
+Then, you need to add this token as a secret in your repository:
 
-This action requires a personal access token with the necessary permissions to change the repository's visibility. You should add this token as a secret in your repository's settings and name it `GH_PAT`.
+1. Go to your repository settings.
+2. Click on "Secrets".
+3. Click on "New repository secret".
+4. Enter `GH_PAT` as the name and paste your token as the value.
+5. Click on "Add secret".
 
-You should also add the target date as a secret in your repository's settings and name it `TARGET_DATE`.
+Now, you can use the action in your workflow:
 
-Here's an example of how to use this action:
-
-```
-yaml
-name: Make Repo Public
-
-on:
-  schedule:
-    - cron: '0 * * * *' # This will run the action every hour
-
-env:
-  VISIBILITY_CHANGED: 'false'
-
-jobs:
-  make-public:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check date and change visibility
-        id: change-visibility
-        uses: your-github-username/make-repo-public-action@v1
-        with:
-          target_date: ${{ secrets.TARGET_DATE }}
-      - name: Disable workflow
-        if: env.VISIBILITY_CHANGED == 'true'
-        run: |
-          curl \
-            -X PUT \
-            -H "Authorization: token ${{ secrets.GH_PAT }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/${{ github.repository }}/actions/workflows/make_repo_public.yml/disable
+```yaml
+- uses: your-username/make-repo-public@v1
+  with:
+    target_date: '1685953800'
+    gh_pat: ${{ secrets.GH_PAT }}
+    webhook_url: 'http://backend.hats.finance/test'
+    verification: 'jggdfjg73r78gduigduy'
 ```
 
-In this example, replace your-github-username with your actual GitHub username, and make-repo-public-action with the actual name of your repository. The @v1 at the end is the tag of the release that you want to use.
+In this example, `your-username` should be replaced with your GitHub username, and `v1` should be replaced with the version of the action you want to use. The `target_date`, `gh_pat`, `webhook_url`, and `verification` inputs are set to example values and should be replaced with your own values.
 
-Please note that this action will permanently disable the workflow after it has successfully changed the repository visibility. If you want to run it again, you'll need to manually enable it in the Actions tab of your repository.
+Please note that this action should be used in a workflow that runs on a schedule and has the `make_repo_public.yml` workflow file. If the visibility change is successful, the workflow will be disabled to prevent further runs.
+
+---
+
+Please note that this README assumes that the action is published in the GitHub Marketplace under the name `make-repo-public` and that the user's GitHub username is `your-username`. You should replace these with your actual action name and username.
