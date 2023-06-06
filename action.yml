@@ -10,10 +10,7 @@ inputs:
     required: true
   webhook_url:
     description: 'The URL of the webhook to call'
-    required: true
-  verification:
-    description: 'The verification token'
-    required: true
+    required: false
 runs:
   using: 'composite'
   steps:
@@ -54,16 +51,18 @@ runs:
         fi
       shell: bash
     - run: |
-        RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Content-Type: application/json" \
-          -d '{
-            "repository": "${{ github.repository }}",
-            "target_date": "${{ inputs.target_date }}",
-            "visibility_changed": "${{ env.VISIBILITY_CHANGED }}",
-            "verification": "${{ inputs.verification }}"
-          }' \
-          ${{ inputs.webhook_url }})
-        if [ $RESPONSE -ne 200 ]; then
-          echo "Failed to call webhook. HTTP response code: $RESPONSE"
-          exit 1
+        if [ "${{ inputs.webhook_url }}" != "" ]; then
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Content-Type: application/json" \
+            -d '{
+              "repository": "${{ github.repository }}",
+              "target_date": "${{ inputs.target_date }}",
+              "visibility_changed": "${{ env.VISIBILITY_CHANGED }}",
+              "verification": "${{ inputs.verification }}"
+            }' \
+            ${{ inputs.webhook_url }})
+          if [ $RESPONSE -ne 200 ]; then
+            echo "Failed to call webhook. HTTP response code: $RESPONSE"
+            exit 1
+          fi
         fi
       shell: bash
