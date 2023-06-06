@@ -39,7 +39,7 @@ Then, you need to add this token as a secret in your repository:
 Now, you can use the action in your workflow:
 
 ```yaml
-- uses: your-username/make-repo-public@v1
+- uses: your-username/make-repo-public@v3
   with:
     target_date: '[Unix time of when you want the repo to become public]'
     gh_pat: ${{ secrets.GH_PAT }}
