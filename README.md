@@ -48,7 +48,3 @@ Now, you can use the action in your workflow:
 In this example, `your-username` should be replaced with your GitHub username, and `v3` should be replaced with the version of the action you want to use. The `target_date`, `gh_pat`, `webhook_url`, and `verification` inputs are set to example values and should be replaced with your own values.
 
 Please note that this action should be used in a workflow that runs on a schedule and has the `make_repo_public.yml` workflow file. If the visibility change is successful, the workflow will be disabled to prevent further runs.
-
----
-
-Please note that this README assumes that the action is published in the GitHub Marketplace under the name `make-repo-public` and that the user's GitHub username is `your-username`. You should replace these with your actual action name and username.
