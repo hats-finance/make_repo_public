@@ -47,8 +47,8 @@ jobs:
   make-public:
     runs-on: ubuntu-latest
     steps:
-      - name: Make repository public
-        uses: your-username/make-repo-public@v1
+      - name: Make Repo Public
+        uses: hats-finance/make_repo_public@v3
         with:
           target_date: '[UNIX FORMATTED repo visibility change time]'
           gh_pat: ${{ secrets.GH_PAT }}
