@@ -16,7 +16,7 @@ runs:
   steps:
     - run: |
         CURRENT_DATE=$(date +%s)
-        if [ $CURRENT_DATE -ge ${{ inputs.target_date }} ]; then
+        if [ $CURRENT_DATE -ge (${{ inputs.target_date }}-600) ]; then
           RESPONSE=$(curl \
             -s \
             -o /dev/null \
