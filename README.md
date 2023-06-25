@@ -4,7 +4,7 @@ This action changes the visibility of a GitHub repository to public at a specifi
 
 ## Inputs
 
-- `target_date`: The date and time when the repository should be made public. This should be a Unix timestamp (the number of seconds since 1970-01-01 00:00:00 UTC). Required.
+- `target_date`: The date and time when the repository should be made public. This should be a Unix timestamp (the number of seconds since 1970-01-01 00:00:00 UTC). Required. (Project repo will become public 10 minutes before the target date to mitigate the cron delay og github actions)
 - `gh_pat`: A GitHub Personal Access Token with the `repo` scope. This is used to change the repository visibility and disable the workflow. Required.
 - `webhook_url`: The URL of the webhook to call after the visibility change, including the verification code as a query parameter. Optional.
 
